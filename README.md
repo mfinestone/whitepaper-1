@@ -1,3 +1,4 @@
 # README
-## How to compile to PDF
-You can upload this folder to a https://overleaf.com project to export as a PDF file.
+## Editing and Compiling
+
+You can go to https://www.overleaf.com/project/6320a6e1ce49d83583e10eac to edit the latex file and preview in realtime.
