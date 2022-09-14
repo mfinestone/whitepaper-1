@@ -140,13 +140,13 @@ The Taiko ZK-Rollup protocol has two major smart contracts deployed on L1 and L2
 \subsection{Proposing Blocks}
 All Taiko blocks are proposed permissionlessly on Ethereum and then converted to actual L2 blocks if they are proven valid, or ignored if they are proven invalid.
 
-\subsubsection{Proposed Block} The proposed block in Taiko is the collection of information (known as the block's \textit{Context}), $C$, and a list of transactions, $L$,  (known as the block \textit{txList}). Formally, we can refer to a proposed block $\dot{B}$:
+\subsubsection{Proposed Block} The proposed block in Taiko is the collection of information (known as the block's \textit{Metadata}), $C$, and a list of transactions, $L$,  (known as the block \textit{txList}). Formally, we can refer to a proposed block $\dot{B}$:
 
 \begin{equation}
 \dot{B} \equiv (\dot{B}_{\mathrm{C}}, \dot{B}_{\mathbf{L}}) \equiv (C, L)
 \end{equation}
 
-\subsubsection{Block Context} The block context, $C$, is a tuple of 9 items comprising:
+\subsubsection{Block Metadata} The block metadata, $C$, is a tuple of 9 items comprising:
 
 
 \begin{description}
@@ -242,7 +242,7 @@ Where $H_p$ is the block's parentHash, $H_o$ is the ommersHash, $H_c$ is the ben
 
 Transactions in Taiko also conform to the same Ethereum standard defined by the Ethereum Yellow Paper. But initially, only type 0 (legacy)  transactions are supported as EIP-1559 is disabled on Taiko initially (but may be enabled in a future version).
 
-A proposed block can only be mapped to a Taiko block in a \textit{Mapping Context} which is the world state $\boldsymbol{\sigma}$:
+A proposed block can only be mapped to a Taiko block in a \textit{Mapping Metadata} which is the world state $\boldsymbol{\sigma}$:
 
 $$\boldsymbol{\sigma} \equiv (\boldsymbol{\delta}, h[1..256], d, i, \theta)$$
 
@@ -276,7 +276,7 @@ such that:
 \nonumber& & (H_r, H_t, H_e, H_l, H_g) =   \Pi(\boldsymbol{\sigma}, (T_0, T_1, ...))
 \end{eqnarray}
 
-Where $\Pi$ is the block transition function; $::$ is the list concatenation operator; $V^t$ is the \textit{"initial tests of intrinsic validity"} function defined in the Transaction Execution section of the Ethereum Yellow Paper. To avoid confusion, in this document, we call $V^t$ the \textit{Contextual Validity } function.
+Where $\Pi$ is the block transition function; $::$ is the list concatenation operator; $V^t$ is the \textit{"initial tests of intrinsic validity"} function defined in the Transaction Execution section of the Ethereum Yellow Paper. To avoid confusion, in this document, we call $V^t$ the \textit{Metadataual Validity } function.
 
 $V^t(\texttt{RLP}'(L))$ yields a list of transactions that pass the tests; transactions that don't pass the tests are simply ignored thus will not become part of the L2 block. Note that it is possible and fine that $V^t(\texttt{RLP}'(L))$ returns an empty list.
 
@@ -371,13 +371,13 @@ What a ZKP can and cannot prove is critical to a zkRollup's protocol design. Tai
 \begin{equation}
     p^z(a) \equiv \hat{C}(a, H,\theta, L, \Delta(\theta::V^t(L)) )
 \end{equation}
-Where $H$ is the block header, $\theta$ is the anchor transaction, $L$ is the block's RLP-encoded txList, and $\Delta$ is the EVM trace logs generated from running $\theta$ and all transactions in $L$ that the contextual validity $V^t$ function returns \texttt{True}.
+Where $H$ is the block header, $\theta$ is the anchor transaction, $L$ is the block's RLP-encoded txList, and $\Delta$ is the EVM trace logs generated from running $\theta$ and all transactions in $L$ that the metadataual validity $V^t$ function returns \texttt{True}.
 
 We assume:
 \begin{enumerate}
 \item zkEVM always generates the same ZKP if all inputs are fixed, and;
 \item zkEVM always generates different ZKPs if a single input is changed.
-\item zkEVM is unable to generate a ZKP if the txList fails to pass the block intrinsic validity test or any transaction (including the anchor transaction) fails to pass the transaction contextual validity test.
+\item zkEVM is unable to generate a ZKP if the txList fails to pass the block intrinsic validity test or any transaction (including the anchor transaction) fails to pass the transaction metadataual validity test.
 \item zkEVM also disabled the same set of Ethereum upgrades listed in Appendix \ref{sec:eips}
 \end{enumerate}
 
