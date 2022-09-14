@@ -127,7 +127,6 @@ The Taiko ZK-Rollup protocol has two major smart contracts deployed on L1 and L2
 \end{description}
 
 
-\textit{TaikoL1} also maintains a ring buffer for pending blocks. After $K_{\mathrm{MaxPendingBlocks}}$ blocks are proposed, storage will be reused to reduce propose-block gas usage.
 
 \subsection{TaikoL2} Deployed at address $\mathbf{r_{\mathrm{2}}}$ on Taiko, this contracts offers two major functionalities:
 \begin{enumerate}
@@ -371,13 +370,13 @@ What a ZKP can and cannot prove is critical to a zkRollup's protocol design. Tai
 \begin{equation}
     p^z(a) \equiv \hat{C}(a, H,\theta, L, \Delta(\theta::V^t(L)) )
 \end{equation}
-Where $H$ is the block header, $\theta$ is the anchor transaction, $L$ is the block's RLP-encoded txList, and $\Delta$ is the EVM trace logs generated from running $\theta$ and all transactions in $L$ that the metadataual validity $V^t$ function returns \texttt{True}.
+Where $H$ is the block header, $\theta$ is the anchor transaction, $L$ is the block's RLP-encoded txList, and $\Delta$ is the EVM trace logs generated from running $\theta$ and all transactions in $L$ that the contextual validity $V^t$ function returns \texttt{True}.
 
 We assume:
 \begin{enumerate}
 \item zkEVM always generates the same ZKP if all inputs are fixed, and;
 \item zkEVM always generates different ZKPs if a single input is changed.
-\item zkEVM is unable to generate a ZKP if the txList fails to pass the block intrinsic validity test or any transaction (including the anchor transaction) fails to pass the transaction metadataual validity test.
+\item zkEVM is unable to generate a ZKP if the txList fails to pass the block intrinsic validity test or any transaction (including the anchor transaction) fails to pass the transaction contextual validity test.
 \item zkEVM also disabled the same set of Ethereum upgrades listed in Appendix \ref{sec:eips}
 \end{enumerate}
 
