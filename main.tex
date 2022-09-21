@@ -41,7 +41,7 @@
 
 \usepackage[final]{microtype} % 
 % Default rendering options
-\definecolor{pagecolor}{rgb}{0.96,0.96,1}
+\definecolor{pagecolor}{rgb}{1,1,1}
 \setul{0.1ex}{0.05ex}
 \def\VersionNumber{0.1.0}
 \IfFileExists{Options.tex}{\input{Options.tex}}
@@ -67,7 +67,8 @@
 \author{
   Daniel WANG \texttt{dan@taiko.xyz} \\
   Brecht Devos \texttt{brecht@taiko.xyz}\\
-  Someone Else \texttt{youremail@taiko.xyz}
+  Mevlana Gemici \texttt{mcg@taiko.xyz} \\
+  Matthew Finestone \texttt{matthew@taiko.xyz}
 }
 
 \begin{document}
@@ -111,7 +112,7 @@ Taiko's ZK-Rollup design follows a few principles:
 \item  \textbf{Robust.} The design should not depend on game theory for security. All security assumptions should be directly or indirectly enforced by Ethereum and the protocol. For example, there should be no need to use a Proof-of-Stake like system to slash participants for bad behavior.
 \item \textbf{Decentralized.} The design should encourage a high degree of decentralization in terms of block proposing and proving. No single party should be able to control all transaction ordering or be solely responsible for proving blocks. Being sufficiently decentralized implies that the protocol should keep working in a reliable manner in adversarial situations.
 \item \textbf{Permissionless.} Anyone willing should be able to join and leave the network at any time, without causing significant disturbance to the network or being detrimental to the party in question. No single entity should have the power to whitelist or blacklist participants.
-\item \textbf{Ethereum-Aligned.} The goal is to help Ethereum scale in the best possible way. ETH is used to pay the L2 transaction fees.
+\item \textbf{Ethereum-Aligned.} The goal is to help Ethereum scale in the best possible way. Ether is used to pay the L2 transaction fees.
 \item \textbf{Ethereum-Equivalent.} The design should stick to the design of Ethereum as closely as possible, not only for compatibility reasons but also for the expectations and demands of users of Ethereum L2 solutions.
 \end{enumerate}
 
@@ -342,7 +343,7 @@ A Fork Choice is a tuple of 3 elements:
 E \equiv (H_p, H_h, [(a_1, p^{z}_1, [p^{m_1}_1,...]),...])
 \end{equation}
 
-where $H_p$ is the block's parent hash, $H_h \equiv \texttt{KEC}(\texttt{RLP}(H))$ is the hash of the proposed block, and $(a_i, p^{z}_i, [p^{m_1}_i,...])$ are the $i$-th prover's address and the proofs. $p^{z}$ is a proof that shows the state transition from the parent hash to the block hash is correct, and [$p^{m_1}$,...] are Merkle proofs in the storage/transaction/receipt trie that prove the anchor transaction has been executed successfully as the first transaction of the L2 block.
+where $H_p$ is the block's parent hash, $H_h \equiv \texttt{KEC}(\texttt{RLP}(H))$ is the hash of the proposed block, and $(a_i, p^{z}_i, [p^{m_1}_i,...])$ are the $i$-th prover's address and the proofs. $p^{z}$ is a proof that shows the state transition from the parent hash to the block hash is correct, and [$p^{m_1}$,...] are Merkle proofs in the storage, transaction, and/or receipt trie that prove the anchor transaction has been executed successfully as the first transaction of the L2 block.
 
 Taiko accepts up to $K_{\mathrm{MaxProofsPerForkChoice}}$ proofs per fork choice. Proofs for the correct fork choice will be eligible for compensation. No limit is set on the number of fork choices as the protocol does not know which fork choice for a block is the correct one until the parent block is on-chain finalized.
 
@@ -399,14 +400,14 @@ By making the prover address $a$ an input we can ensure a proof is directly link
 Where $h[i]$ is the block's block hash, $\kappa$ is  zkEVM's verification key.
 
 \section{Cross-Chain Communication}\label{sec:bridges}
-Taiko enables third parties to develop cross-chain bridges. To facilitate this, the protocol ensures that a subset of L1 block hashes are accessible from L2 smart contracts and a subset of  L2 block hashes are also accessible from the \underline{TaikoL1} smart contract. These block hashes can be used to verify the validity of cross-chain messages in standard smart contracts. Taiko does not have to provide any bridging solutions itself, as the supporting core functionality are ready for others to build upon. An exception to this is the ETH bridge which requires special handling, see \ref{eth-bridge}. 
+Taiko enables third parties to develop cross-chain bridges. To facilitate this, the protocol ensures that a subset of L1 block hashes are accessible from L2 smart contracts and a subset of  L2 block hashes are also accessible from the \underline{TaikoL1} smart contract. These block hashes can be used to verify the validity of cross-chain messages in standard smart contracts. Taiko does not have to provide any bridging solutions itself, as the supporting core functionality are ready for others to build upon. An exception to this is the Ether bridge which requires special handling, see \ref{eth-bridge}. 
 
 On Ethereum, the \underline{TaikoL1} contract persists the height and hash of the L2 blocks. On Taiko, the anchor function in the \emph{\underline{TaikoL2}} contract is used to persist the height and block hash of the previous Ethereum block (from when the L2 block was proposed), as well as the previous L2 block hash (which allows L2 smart contracts to easily fetch the full history of L2 block hashes).
 
 \subsection{Ether on L2}\label{eth-bridge}
-The Taiko ETH bridge will allow users to bridge ETH from and to Taiko. $2^{128}$ Ether is minted to a special vault contract called the \underline{TokenVault} in the genesis block. When a user deposits Ether to L2, the same amount of Ether will be transferred from the \underline{TokenVault} to the user on L2. When a user withdraws some Ether from L2, Ether on L2 will be transferred back to \underline{TokenVault} (no L2 Ether will ever be burnt).
+The Taiko Ether bridge will allow users to bridge Ether from and to Taiko. $2^{128}$ Ether is minted to a special vault contract called the \underline{TokenVault} in the genesis block. When a user deposits Ether to L2, the same amount of Ether will be transferred from the \underline{TokenVault} to the user on L2. When a user withdraws some Ether from L2, Ether on L2 will be transferred back to \underline{TokenVault} (no L2 Ether will ever be burnt).
 
-A small amount of Ether will also be minted to a few EOAs to bootstrap the L2 network, otherwise nobody would be able to transact. To make sure the ETH bridge is solvent, a corresponding amount of ETH will be deposited to the ETH bridge on L1.
+A small amount of Ether will also be minted to a few EOAs to bootstrap the L2 network, otherwise nobody would be able to transact. To make sure the Ether bridge is solvent, a corresponding amount of Ether will be deposited to the Ether bridge on L1.
 
 \section{Future Improvements}\label{sec:improvements}
 
@@ -434,7 +435,7 @@ Although rollups can have significantly higher network capacity than L1s, this c
 At block proposal we keep track of how much work (measured in gas) is required to process the block, while subtracting the amount of work the Taiko network can handle. This effectively creates a market for network capacity (in gas) per ETH. This will impact how expensive Taiko block space is (paid by the block proposer), the higher the demand the higher the network fee (a fee paid to the Taiko DAO). This way, rate limiting is achieved in a way that does not simply impose a hard and inefficient cap on the network, instead this mechanism allows users to utilize the network in a fair way while allowing the Taiko network to capture the created value. And because the same mechanism is used on Ethereum it allows Taiko to be Ethereum-equivalent (with some small implementation detail changes) even for this part of its network, which is not obviously the case for L2s.
 
 \subsection{EIP-1559 Powered Prover fees}\label{sec:eip1559-proof}
-Proving blocks requires significant compute power to calculate the proof and ETH to submit and verify the proof on Ethereum. Provers need to be compensated for this work as the network needs to attract provers that are willing to do this work. How much to pay for a proof is not obvious however:
+Proving blocks requires significant compute power to calculate the proof to submit and verify the proof on Ethereum. Provers need to be compensated for this work as the network needs to attract provers that are willing to do this work. How much to pay for a proof is not obvious however:
 \begin{enumerate}
 \item The Ethereum gas cost to publish/verify a proof on Ethereum is unpredictable.
 \item The proof generation cost does not necessarily match perfectly with the gas cost.
@@ -450,12 +451,10 @@ It can be observed that this problem is very similar to the rate limiting proble
 
 An additional complication is that the protocol expects the block proposer to pay the proving fee at block proposal time. As such, the \emph{basefee} of this model is used to charge the proposer of a block using the total gas used in the block. This is only an estimate of the actual cost because the actual cost is only known when the proof is submitted. If the estimated cost was too high the difference is returned to the block proposer and the \emph{basefee} is decreased. If the estimated cost was too low extra Taiko tokens are minted to make up the difference and the \emph{basefee} is increased. To lower the chance that the estimated cost is too low and extra Taiko tokens need to be minted, a slightly higher \emph{basefee} can be charged to the proposer than the one predicted by the model.
 
-\subsection{Leverage Staking Withdrawal Support for the ETH Bridge}\label{sec:withdrawals}
-Once withdrawing staked ETH is supported by Ethereum we will be able to use the same infrastructure to bridge ETH. Although this is still a work in progress and the final spec is still unknown, this should provide a more standard solution than the system described in \ref{eth-bridge}.
+\subsection{Leverage Staking Withdrawal Support for the Ether Bridge}\label{sec:withdrawals}
+Once withdrawing staked Ether is supported by Ethereum we will be able to use the same infrastructure to bridge ETH. Although this is still a work in progress and the final spec is still unknown, this should provide a more standard solution than the system described in \ref{eth-bridge}.
 
 \end{multicols}
-
-\newpage
 
 \bibliographystyle{IEEEtran}
 \bibliography{main}
@@ -532,7 +531,7 @@ $K_{\mathrm{AnchorTxGasLimit}}$ & 100000 & Anchor transaction's fixed gas limit.
 \toprule
 Name &  \quad \quad Value \\
 \midrule
-$K_{\mathrm{AnchorTxSelector}}$ &  \quad \quad 0xa0ca \\
+$K_{\mathrm{AnchorTxSelector}}$ &  \quad \quad 0xa0ca2d08 \\
 $K_{\mathrm{GoldenTouchAddress}}$ &  \quad \quad 0x0000777735367b36bC9B61C50022d9D0700dB4Ec  \\
 $K_{\mathrm{GoldenTouchPrivateKey}}$ & \quad \quad 0x92954368afd3caa1f3ce3ead0069c1af414054aefe1ef9aeacc1bf426222ce38 \\
 $K_{\mathrm{InvalidateBlockLogTopic}}$ & \quad \quad 0x64b299ff9f8ba674288abb53380419048a4271dda03b837ecba6b40e6ddea4a2 \\
