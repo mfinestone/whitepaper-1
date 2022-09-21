@@ -311,19 +311,19 @@ B & \equiv & (H, T, U), \\
 \nonumber & \equiv & M(\boldsymbol{\delta},  \theta, C, L)
 \end{eqnarray}
 
-\subsubsection{Construction of Anchor Transactions} All anchor transactions are signed by a \textit{goldfinger} address with a revealed private key. 
+\subsubsection{Construction of Anchor Transactions} All anchor transactions are signed by a \textit{GoldenTouch} address with a revealed private key. 
 
 Anchor transactions are constructed by Taiko L2 nodes as follows:
 
 \begin{eqnarray}
 & & \theta_x = 0 \quad \wedge \\
-\nonumber& & \theta_n = \boldsymbol{\delta}[K_{\mathrm{GoldfingerAddress}}]_n + 1 \quad \wedge \\
+\nonumber& & \theta_n = \boldsymbol{\delta}[K_{\mathrm{GoldenTouchAddress}}]_n + 1 \quad \wedge \\
 \nonumber& & \theta_p = 0 \quad \wedge \\
 \nonumber& & \theta_g = K_{\mathrm{AnchorTxGasLimit}} \quad \wedge \\
-\nonumber& & \theta_t = K_{\mathrm{GoldfingerAddress}} \quad \wedge  \\
+\nonumber& & \theta_t = K_{\mathrm{GoldenTouchAddress}} \quad \wedge  \\
 \nonumber& & \theta_v = 0 \quad \wedge  \\
 \nonumber& & \theta_d = K_{\mathrm{AnchorTxSelector}}::C_a::C_h \quad \wedge  \\
-\nonumber& & (\theta_r,\boldsymbol{\delta}_s) = \texttt{K1ECDSA}(\boldsymbol{\delta}, K_{\mathrm{GoldfingerPrivateKey}})
+\nonumber& & (\theta_r,\boldsymbol{\delta}_s) = \texttt{K1ECDSA}(\boldsymbol{\delta}, K_{\mathrm{GoldenTouchPrivateKey}})
 \end{eqnarray}
 
 Where \texttt{K1ECDSA} is the ECDSA\cite{ecdsa} signing function with the internal variable $k$ set to $1$, which guarantees the transaction's signature to only depend on the transaction data itself and is therefore deterministic.
@@ -470,7 +470,7 @@ Once withdrawing staked ETH is supported by Ethereum we will be able to use the 
 
 \item[Fork Choice] A data structure to capture a block's proving result based on a prover-chosen parent block.
 
-\item[Goldfinger Address] An address with a revealed private key to transact all anchor transactions.
+\item[GoldenTouch Address] An address with a revealed private key to transact all anchor transactions.
 
 \item[zkEVM] A project that aims to define a validity snark proof for Ethereum transactions. zkEVM is initiated and led by 
 Privacy \& Scaling Explorations (formerly known as AppliedZKP). \\ 
@@ -533,8 +533,8 @@ $K_{\mathrm{AnchorTxGasLimit}}$ & 100000 & Anchor transaction's fixed gas limit.
 Name &  \quad \quad Value \\
 \midrule
 $K_{\mathrm{AnchorTxSelector}}$ &  \quad \quad 0xa0ca \\
-$K_{\mathrm{GoldfingerAddress}}$ &  \quad \quad 0x0000777735367b36bC9B61C50022d9D0700dB4Ec  \\
-$K_{\mathrm{GoldfingerPrivateKey}}$ & \quad \quad 0x92954368afd3caa1f3ce3ead0069c1af414054aefe1ef9aeacc1bf426222ce38 \\
+$K_{\mathrm{GoldenTouchAddress}}$ &  \quad \quad 0x0000777735367b36bC9B61C50022d9D0700dB4Ec  \\
+$K_{\mathrm{GoldenTouchPrivateKey}}$ & \quad \quad 0x92954368afd3caa1f3ce3ead0069c1af414054aefe1ef9aeacc1bf426222ce38 \\
 $K_{\mathrm{InvalidateBlockLogTopic}}$ & \quad \quad 0x64b299ff9f8ba674288abb53380419048a4271dda03b837ecba6b40e6ddea4a2 \\
 $K_{\mathrm{EmptyOmersHash}}$ & \quad \quad 0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347   \quad \quad \quad \quad \\
 \bottomrule
