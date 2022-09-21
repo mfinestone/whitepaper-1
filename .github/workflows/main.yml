@@ -16,14 +16,11 @@ jobs:
         with:
           root_file: main.tex
 
-      - name: Upload
-        uses: actions/upload-artifact@v2
-        with:
-          name: whitepaper
-          path: main.pdf
+      - name: Rename
+        run:  mv main.pdf taiko-whitepaper.pdf
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v1.0.0
-          files: main.pdf
+          files: taiko-whitepaper.pdf
