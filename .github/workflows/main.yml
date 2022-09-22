@@ -8,19 +8,26 @@ jobs:
   build_latex:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Git repository
+      - name: Set up repository
         uses: actions/checkout@v2
 
-      - name: Compile LaTeX document
+      - name: Compile main.tex
         uses: xu-cheng/latex-action@v2
         with:
           root_file: main.tex
 
+      - name: Compile tokenomics.tex
+        uses: xu-cheng/latex-action@v2
+        with:
+          root_file: tokenomics.tex
+
       - name: Rename
-        run:  mv main.pdf taiko-whitepaper.pdf
+        run:  mv main.pdf taiko-whitepaper.pdf && mv tokenomics.pdf taiko-tokenomics.pdf
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v1.0.0
-          files: taiko-whitepaper.pdf
+          files:
+            - taiko-whitepaper.pdf
+            - taiko-tokenomics.pdf
