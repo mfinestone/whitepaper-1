@@ -69,43 +69,38 @@
 \section{Taiko Block Fees}
 We assume EIP-1559 will be enabled on L2 to adjust L2 block gas price and gas limit.
 
-Let $K_{\mathrm{MaxProposedBlocks}}$ be the max number of slots for proposed blocks; $m$ be the current number of available slots, ; $p$ be the fee for proposing the first L2 block. we maintain two internal variables $m$ and $k$, whose values are initialized to $K_{\mathrm{MaxProposedBlocks}}$ and $pK_{\mathrm{MaxProposedBlocks}}$, respectively.
+Let $K_{\mathrm{MaxSlots}}$ be the max number of slots for proposed blocks; $m$ be the current number of available slots; $K_{\mathrm{InitialProposingFee}}$ be the fee for proposing the first L2 block. we maintain two internal variables $\boldsymbol{m}$ and $\boldsymbol{k}$, whose values are initialized to $K_{\mathrm{MaxSlots}}$ and $(K_{\mathrm{InitialProposingFee}} \times K_{\mathrm{MaxSlots}})$, respectively.
 
 We adopt the idea from \textit{Automatic Market Making}, and require that when $m$ changes to a new value $m'$, $k$ must also change to a new value $k'$ such that:
 
-Then we update k as follows:
 \begin{eqnarray}
-k'(m'+1) \equiv k(m+1)
+k'(m'+K_{\mathrm{FeeFactor}}) \equiv k(m+K_{\mathrm{FeeFactor}})
 \end{eqnarray}
 
+$K_{\mathrm{FeeFactor}}$ must be no smaller than 1. A bigger value enables smaller fee oscillation.
 
 \subsection{Proposing Fees}
-If $n$ blocks are proposed in one batch, then we have:
+If $n$, ($n \leq m$), blocks are proposed in one batch:
 
 \begin{eqnarray}
-k'(m-n+1)  \equiv   k(m+1)
-\end{eqnarray}
-
-thus:
-
-\begin{eqnarray}
-k'  \equiv \frac{k(m+1)}{m-n+1}
+k'(m+K_{\mathrm{FeeFactor}}-n)  &  \equiv  &  k(m+K_{\mathrm{FeeFactor}}) \\
+k'  & \equiv & \frac{(m+K_{\mathrm{FeeFactor}})}{(m+K_{\mathrm{FeeFactor}}-n)}k
 \end{eqnarray}
 
 The difference between $k$ and $k'$ is the total proposing fee for these $n$ blocks:
 
 \begin{eqnarray}
-f(n)  \equiv  k' - k  \equiv   \frac{kn}{m-n+1}  
+f(n)  \equiv  k' - k  \equiv   \frac{nk}{(m+K_{\mathrm{FeeFactor}}-n)}
 \end{eqnarray}
 
-therefore, the average proposal fee per block in this batch is 
+therefore, the average proposal fee per block in this batch is:
 
 \begin{eqnarray}
-\bar{f}(n)   \equiv \frac{f(n)}{n} \equiv \frac{k}{m-n+1}
+\bar{f}(n)   \equiv \frac{f(n)}{n} \equiv \frac{k}{(m+K_{\mathrm{FeeFactor}}-n)}
 \end{eqnarray}
 
 
-Usually, blocks are proposed one after another, therefore, the block proposing fee is:
+Usually, blocks are proposed one after another, therefore, the fee for proposing a single block is:
 
 \begin{eqnarray}
 f(1)  \equiv \bar{f}(1)  \equiv \frac{k}{m}
@@ -118,7 +113,9 @@ The proposal fee for the very first block is:
 
 
 \begin{eqnarray}
-f_1  \equiv \frac{k}{m}  \equiv \frac{pK_{\mathrm{MaxProposedBlocks}}}{K_{\mathrm{MaxProposedBlocks}}} \equiv p
+f_1  & \equiv & \frac{k}{m}  \\
+\nonumber & \equiv & \frac{ (K_{\mathrm{InitialProposingFee}} \times K_{\mathrm{MaxSlots}})}{K_{\mathrm{MaxSlots}}}  \\
+\nonumber & \equiv &K_{\mathrm{InitialProposingFee}}
 \end{eqnarray}
 
 
@@ -127,8 +124,8 @@ f_1  \equiv \frac{k}{m}  \equiv \frac{pK_{\mathrm{MaxProposedBlocks}}}{K_{\mathr
 Provers are paid with a proving fee when their blocks are finalized. Suppose $n$ blocks are finalized in one batch, then we have:
 
 \begin{eqnarray}
-k'  (m+n+1) & \equiv  & k(m+1) \\
-\nonumber k'  & \equiv & \frac{k(m+1)}{m+n+1} 
+k'  (m+K_{\mathrm{MaxSlots}}+n) & \equiv  & (m+K_{\mathrm{MaxSlots}}) \\
+\nonumber k'  & \equiv & \frac{(m+K_{\mathrm{FeeFactor}})}{(m+K_{\mathrm{FeeFactor}}+n)} k
 \end{eqnarray}
 
 
@@ -136,7 +133,7 @@ k'  (m+n+1) & \equiv  & k(m+1) \\
 The total proving fee is:
 
 \begin{eqnarray}
-f(n)  \equiv  k - k'  \equiv \frac{kn}{m+n+1} 
+f(n)  \equiv  k - k'  \equiv \frac{nk}{(m+K_{\mathrm{FeeFactor}}+n)}
 \end{eqnarray}
 
 
@@ -144,26 +141,35 @@ Each block's prover receive proving fee:
 
 
 \begin{eqnarray}
-\bar{f}(n)  \equiv \frac{f(n)}{n}  \equiv \frac{k}{m+n+1} 
+\bar{f}(n)  \equiv \frac{f(n)}{n}  \equiv \frac{k}{(m+K_{\mathrm{FeeFactor}}+n)}
 \end{eqnarray}
+
+Note that proving fees are calculated and paid when blocks are finalized, not when they are proven.
 
 \subsection{Adjusting fees based on proving time}
-when a block is proven, we update two proving delay moving average:  $a^1$ is a longer term-moving average that changes more slowly, formally
-$a^1_{i+1} \equiv (a^1_{i} * 1023 + d_i)/1024$;  $a^2$ is a short term-moving average that changes more rapidly, formally
-$a^2_{i+1} \equiv (a^2_{i} * 63 + d_i)/64$.
+when a block is proven, we update two proving delay moving average:  $\boldsymbol{a^L}$ and $\boldsymbol{a^S}$, formally:
 
-Then we update k as follows:
 \begin{eqnarray}
-\mu & \equiv & \min(\max( \frac{a^2}{a^1}, \frac{1}{0.95}), 0.95) \\
-k' & \equiv  & \mu k  
+a^L_{i+1} & \equiv & \frac{(1024-1) a^L_{i} + d}{1024} \\
+a^S_{i+1} & \equiv & \frac{(64-1) a^S_{i} + d} {64}
 \end{eqnarray}
 
-$\mu$ is called the \textit{fee market adjustment factor}.
+Where $d$ is the latest block's proving delay.
 
-\subsection{TKO as Protocol-Level Fee Token}
-I strongly recommend to use TKO, Taiko's governance token,  as the block proposing and proving fee token. When a block is proposed, TKO is burned from the proposer address; when a block is finalized, TKO is minted to the prover address, which features a dynamic total token supply determined by the ZKP proving market.
 
-For a tokenomics to work for the long run, there must be both demands and supplies. This model offers such a property.
+Then we update $k$ as:
+\begin{eqnarray}
+\mu & \equiv & \min(\max( \frac{a^S}{a^L}, \frac{100}{0.95}), 0.95) \\
+k' & \equiv  & \mu k
+\end{eqnarray}
+
+$\mu$ is called the fee market \textit{Amplification Factor}.
+
+\subsection{TKO as the Block-Level Fee Token}
+
+We use Ether as the L2 transaction fee token; but on L1, I strongly suggest to use TKO, Taiko's governance token,  as the block proposing and proving fee token. When a block is proposed, TKO is burned from the proposer address; when a block is finalized, TKO is minted to the prover address, which features a dynamic token supply determined by the open ZKP computation market.
+
+For a tokenomic design to work for the long run, there must be both demands and supplies. This model offers such a property.
 \end{multicols}
 
 \end{document}
