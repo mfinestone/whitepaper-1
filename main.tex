@@ -33,7 +33,6 @@
  \newcommand{\linkdest}[1]{\Hy@raisedlink{\hypertarget{#1}{}}}
 \makeatother
 \usepackage{seqsplit}
-
 \usepackage{soul}
 \usepackage[english]{babel}
 \usepackage[autostyle]{csquotes}
@@ -62,7 +61,7 @@
 %\renewcommand{\itemhook}{\setlength{\topsep}{0pt}  \setlength{\itemsep}{0pt}\setlength{\leftmargin}{15pt}}
 
 \title[TAIKO: A Type-1 Ethereum ZK-Rollup\\ \smaller
-\textbf{{DRAFT}}]{TAIKO: A Type-1 Ethereum ZK-Rollup \\ \smaller \textbf{{DRAFT, \thedate}}}
+\textbf{{1.0.0}}]{TAIKO: A Type-1 Ethereum ZK-Rollup \\ \smaller \textbf{{1.0.0 (\thedate)}}}
 
 \author{
   Daniel WANG \texttt{dan@taiko.xyz} \\
@@ -76,9 +75,7 @@
 \pagecolor{pagecolor}
 
 \begin{abstract}
-\color{brown}
-TODO: write abstract here
-\color{black}
+An EVM-equivalent ZK-Rollup would allow for scaling Ethereum without sacrificing security or compatibility. Advancements in Zero-Knowledge Proof cryptography have led to a flourishing of zkEVMs, now with further design decisions to choose from. Taiko aims to be a "type-1" ZK-Rollup, prioritizing EVM-equivalence, and even Ethereum-equivalence. Supporting all existing Ethereum applications, tools, and infrastructure is a primary goal and benefit of this path. Besides the maximally compatible zkEVM component, which proves the correctness of EVM computation on the rollup, Taiko must implement a Layer 2 blockchain architecture to support it. This architecture seeks to be as lightweight, decentralized, and permissionless as possible, and consists of Taiko nodes, provers, and smart contracts. Taiko nodes construct rollup blocks from user’s L2 transactions and commit them to L1; any willing participant can run a Taiko node. Provers generate ZK-SNARK proofs asserting the validity of L2 transactions and blocks; any willing participant can run a prover. A set of smart contracts deployed on Ethereum L1 acts as the data availability mechanism, verifier of the ZKPs, and part of the bridge for moving assets between L1 and L2. 
 
 \end{abstract}
 
@@ -89,9 +86,13 @@ TODO: write abstract here
 
 
 \section{Introduction}
+Ethereum is well on its way into executing its rollup-centric roadmap to achieve scalability. At its base layer, Ethereum has always been unwilling to sacrifice decentralization or security in favour of scalability - principles which make it the most compelling network to secure value. Its popularity, however, has often congested the network, led to prohibitively expensive transaction fees, and crowded out certain users and applications. The activity that Ethereum settles will increasingly be executed on rollups - Layer 2 environments tightly coupled to and secured by Ethereum. Rollups have shifted the tradeoff space: scaling to serve all users who seek to transact on Ethereum - and enabling lesser-value, non-financial applications - without subordinating security or decentralization. 
 
-\color{brown}
-TODO: describe Ethereum scalability challenges?
+There exists new tradeoff space, though, now among different rollup constructions, and there exists a hope to again move the solution curve, rather than move along it. Taiko attempts to do exactly that, by implementing a zkEVM that stays as true to the EVM and Ethereum specification as possible.
+
+Taiko aims for full Ethereum-equivalence, allowing our rollup to support all existing smart contracts and applications, developer tooling, and infrastructure. This convenience of complete compatibility benefits Ethereum developers who can easily deploy their existing contracts and continue using the tools they are familiar with. This compatibility extends to end-users as well, who will experience the same usage patterns, and can continue using their preferred Ethereum products. 
+
+To be Ethereum-equivalent means to emulate Ethereum along further dimensions, too. Prioritizing permissionlessness and decentralization within the Layer 2 architecture ensures there is no dissonance between the environments, and the Ethereum community’s core principles are upheld. With calldata cost reductions in the past, and EIP4844 and others in the future, Ethereum's commitment to rollups is strong and credible; rollups' commitment to Ethereum ought to be the same.
 
 \color{black}
 
@@ -116,7 +117,7 @@ Taiko's ZK-Rollup design follows a few principles:
 \item \textbf{Ethereum-Equivalent.} The design should stick to the design of Ethereum as closely as possible, not only for compatibility reasons but also for the expectations and demands of users of Ethereum L2 solutions.
 \end{enumerate}
 
-With these principles, our objective is to design and implement a fully Ethereum-equivalent (type-1) ZK-Rollup \cite{vitalik-zkevm}. This not only means that Taiko can directly interpret EVM bytecode, but also uses the same hash functions, state trees, transaction trees, precompiled contracts, and other in-consensus logic. We do however disable certain EIPs in the initial implementation that will be re-enabled later (see \ref{sec:eips}).
+With these principles, our objective is to design and implement a fully Ethereum-equivalent (type-1) ZK-Rollup \cite{vitalik-zkevm}. This not only means that Taiko can directly interpret EVM bytecode, but also uses the same hash functions, state trees, transaction trees, precompiled contracts, and other in-consensus logic. We do however disable certain EIPs in the initial implementation\cite{taikoprotogithub} that will be re-enabled later (see \ref{sec:eips}).
 
 \section{Overview}\label{sec:properties}
 
@@ -358,9 +359,10 @@ If a block fails to pass the Intrinsic Validity Function $V^l$, the block can be
 
 The Fork Choice for an invalid block is:
 
-\begin{equation}
-E \equiv (H_p, H_h \equiv K_{\mathrm{BlockDeadEndHash}}, [(a_1, p^{z}_1, p^{m}_1),...])
-\end{equation}
+\begin{eqnarray}
+E \equiv (H_p, H_h, [(a_1, p^{z}_1, p^{m}_1),...]) \\
+H_h \equiv K_{\mathrm{BlockDeadEndHash}}
+\end{eqnarray}
 
 Where $K_{\mathrm{BlockDeadEndHash}}$ is a special value marking this Fork Choice is for an invalid block; $p^{z}$ and  $p^{m}$ prove the throw-away block is invalid, not the target proposed block.
 
@@ -368,7 +370,7 @@ It's important to note that these throw-away blocks are never a part of the Taik
 
 \subsection{On-chain Finalization of Blocks}\label{sec:finalizing}
 
-Assuming the $j$-th block is the last finalized valid block. The $i$-th block ($i > j$) can be finalized if 1) the $(i-1)$-th block has been finalized, and 2) the $i$-th block has a Fork Choice $E$ whose parent block hash $E(H_p)$ equals the the $j$-th block's hash.
+Assuming the $j$-th block is the last finalized valid block. The $i$-th block ($i > j$) can be finalized if 1) the $(i-1)$-th block has been finalized, and 2) the $i$-th block has a Fork Choice $E$ whose parent block hash $E(H_p)$ equals the $j$-th block's hash.
 
 If $H_h$ equals $K_{\mathrm{BlockDeadEndHash}}$, the $i$-th block is marked as finalized but $j$ is not updated (otherwise $j$ changes to $i$ and so the $i$-th block would become the last finalized valid block while the block is not valid). So on L1, because each block needs to handled, valid or invalid, all blocks are part of the block chain through the Fork Choices. In Taiko nodes invalid blocks can be immediately dropped and are never part of Taiko's canonical chain.
 
@@ -449,15 +451,31 @@ It's clear that a fixed proving fee does not work. The protocol should also not 
 
 It can be observed that this problem is very similar to the rate limiting problem \ref{sec:eip1559-propose}. The network, somehow, has to find the correct price between two resources where the demand/supply is ever changing. We can model this problem as a market between the proving fee (per gas) per proof delay (per time unit), striking a dynamic balance between proving cost and proof delay.
 
-An additional complication is that the protocol expects the block proposer to pay the proving fee at block proposal time. As such, the \emph{basefee} of this model is used to charge the proposer of a block using the total gas used in the block. This is only an estimate of the actual cost because the actual cost is only known when the proof is submitted. If the estimated cost was too high the difference is returned to the block proposer and the \emph{basefee} is decreased. If the estimated cost was too low extra Taiko tokens are minted to make up the difference and the \emph{basefee} is increased. To lower the chance that the estimated cost is too low and extra Taiko tokens need to be minted, a slightly higher \emph{basefee} can be charged to the proposer than the one predicted by the model.
+An additional complication is that the protocol expects the block proposer to pay the proving fee at block proposal time. As such, the \emph{baseFee} of this model is used to charge the proposer of a block using the total gas used in the block. This is only an estimate of the actual cost because the actual cost is only known when the proof is submitted. If the estimated cost was too high the difference is returned to the block proposer and the \emph{baseFee} is decreased. If the estimated cost was too low extra Taiko tokens are minted to make up the difference and the \emph{baseFee} is increased. To lower the chance that the estimated cost is too low and extra Taiko tokens need to be minted, a slightly higher \emph{baseFee} can be charged to the proposer than the one predicted by the model.
 
 \subsection{Leverage Staking Withdrawal Support for the Ether Bridge}\label{sec:withdrawals}
-Once withdrawing staked Ether is supported by Ethereum we will be able to use the same infrastructure to bridge ETH. Although this is still a work in progress and the final spec is still unknown, this should provide a more standard solution than the system described in \ref{eth-bridge}.
+Once withdrawing staked Ether is supported by Ethereum we will be able to use the same infrastructure to bridge Ether. Although this is still a work in progress and the final spec is still unknown, this should provide a more standard solution than the system described in \ref{eth-bridge}.
 
 \end{multicols}
 
-\bibliographystyle{IEEEtran}
-\bibliography{main}
+\begin{thebibliography}{9}
+\bibitem{vitalik-zkevm}
+\url{https://vitalik.ca/general/2022/08/04/zkevm.html}
+\bibitem{yellow-paper}
+\url{https://ethereum.github.io/yellowpaper/paper.pdf}
+\bibitem{ecdsa}
+\url{https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm}
+\bibitem{eip4844}
+\url{https://eips.ethereum.org/EIPS/eip-4844}
+\bibitem{eip1559}
+\url{https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1559.md}
+\bibitem{deflate}
+\url{https://en.wikipedia.org/wiki/Deflate}
+\bibitem{mev}
+\url{https://ethereum.org/en/developers/docs/mev}
+\bibitem{taikoprotogithub}
+\url{https://github.com/taikochain/taiko-mono/tree/main/packages/protocol}
+\end{thebibliography}
 
 \appendix
 
@@ -485,7 +503,7 @@ Name & Status \\
 \midrule
 EIP-606 -- Hardfork Meta: Homestead & \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad  Enabled \\
 EIP-779 -- Hardfork Meta: DAO Fork & Disabled \\
-EIP-150 - Gas cost changes for IO-heavy operations & Enabled \\
+EIP-150 -- Gas cost changes for IO-heavy operations & Enabled \\
 EIP-155 -- Simple replay attack protection &  Enabled \\
 EIP-158 -- State clearing) & Enabled \\
 EIP-609 -- Hardfork Meta: Byzantium & Enabled \\
@@ -539,21 +557,5 @@ $K_{\mathrm{EmptyOmersHash}}$ & \quad \quad 0x1dcc4de8dec75d7aab85b567b6ccd41ad3
 \bottomrule
 \end{tabu}
 
-\begin{thebibliography}{9}
-\bibitem{vitalik-zkevm}
-\url{https://vitalik.ca/general/2022/08/04/zkevm.html}
-\bibitem{yellow-paper}
-\url{https://ethereum.github.io/yellowpaper/paper.pdf}
-\bibitem{ecdsa}
-\url{https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm}
-\bibitem{eip4844}
-\url{https://eips.ethereum.org/EIPS/eip-4844}
-\bibitem{eip1559}
-\url{https://github.com/ethereum/EIPs/blob/master/EIPS/eip-1559.md}
-\bibitem{deflate}
-\url{https://en.wikipedia.org/wiki/Deflate}
-\bibitem{mev}
-\url{https://ethereum.org/en/developers/docs/mev}
-\end{thebibliography}
 
 \end{document}
