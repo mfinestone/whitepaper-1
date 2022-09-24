@@ -32,3 +32,6 @@ jobs:
           service: infura
           infuraProjectId: ${{ secrets.INFURA_PROJECT_ID }}
           infuraProjectSecret: ${{ secrets.INFURA_PROJECT_SECRET }}
+          pinName: taiko-whitepaper
+          key: taiko-whitepaper
+          
