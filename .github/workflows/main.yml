@@ -24,3 +24,10 @@ jobs:
         with:
           tag_name: v1.0.0
           files: taiko-whitepaper.pdf
+
+      - name: Upload to Wiki
+        uses: SwiftDocOrg/github-wiki-publish-action@v1
+        with:
+          path: taiko-whitepaper.pdf
+        env:
+          GH_PERSONAL_ACCESS_TOKEN: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
