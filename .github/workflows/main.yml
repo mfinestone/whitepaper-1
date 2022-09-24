@@ -28,6 +28,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v1.0.0
-          files:
-            - taiko-whitepaper.pdf
-            - taiko-tokenomics.pdf
+          files: taiko-whitepaper.pdf
