@@ -29,6 +29,6 @@ jobs:
         uses: aquiladev/ipfs-action@master
         with:
           path: ./taiko-whitepaper.pdf
-        service: infura
+          service: infura
           infuraProjectId: ${{ secrets.INFURA_PROJECT_ID }}
           infuraProjectSecret: ${{ secrets.INFURA_PROJECT_SECRET }}
