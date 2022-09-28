@@ -75,7 +75,7 @@
 \pagecolor{pagecolor}
 
 \begin{abstract}
-An EVM-equivalent ZK-Rollup would allow for scaling Ethereum without sacrificing security or compatibility. Advancements in Zero-Knowledge Proof cryptography have led to a flourishing of ZK-EVMs, now with further design decisions to choose from. Taiko aims to be a "type-1" ZK-Rollup, prioritizing EVM-equivalence, and even Ethereum-equivalence. Supporting all existing Ethereum applications, tools, and infrastructure is a primary goal and benefit of this path. Besides the maximally compatible ZK-EVM component, which proves the correctness of EVM computation on the rollup, Taiko must implement a Layer-2 blockchain architecture to support it. This architecture seeks to be as lightweight, decentralized, and permissionless as possible, and consists of Taiko nodes, provers, and smart contracts. Taiko nodes construct rollup blocks from user’s L2 transactions and commit them to L1; any willing participant can run a Taiko node. Provers generate ZK-SNARK proofs asserting the validity of L2 transactions and blocks; any willing participant can run a prover. A set of smart contracts deployed on Ethereum L1 acts as the data availability mechanism, verifier of the ZKPs, and part of the bridge for moving assets between L1 and L2. 
+An EVM-equivalent ZK-Rollup would allow for scaling Ethereum without sacrificing security or compatibility. Advancements in Zero-Knowledge Proof cryptography have led to a flourishing of ZK-EVMs, now with further design decisions to choose from. Taiko aims to be a "type-1" ZK-Rollup, prioritizing EVM-equivalence, and even Ethereum-equivalence. Supporting all existing Ethereum applications, tooling, and infrastructure is a primary goal and benefit of this path. Besides the maximally compatible ZK-EVM component, which proves the correctness of EVM computation on the rollup, Taiko must implement a layer-2 blockchain architecture to support it. This architecture seeks to be as lightweight, decentralized, and permissionless as possible, and consists of Taiko nodes, provers, and smart contracts. Taiko nodes construct rollup blocks from user’s L2 transactions and commit them to L1; any willing participant can run a Taiko node. Provers generate ZK-SNARK proofs asserting the validity of L2 transactions and blocks; any willing participant can run a prover. A set of smart contracts deployed on Ethereum L1 acts as the data availability mechanism, verifier of the ZKPs, and part of the bridge for moving assets between L1 and L2. 
 
 \end{abstract}
 
@@ -88,11 +88,11 @@ An EVM-equivalent ZK-Rollup would allow for scaling Ethereum without sacrificing
 \section{Introduction}
 Ethereum is well on its way into executing its rollup-centric roadmap to achieve scalability. This progress has been shared by the independent rollup projects, as well as Ethereum itself which has coordinated to accommodate rollup-friendly upgrades. 
 
-At its base layer, facing the blockchain scalability trilemma, Ethereum has always been unwilling to sacrifice decentralization or security in favour of scalability - principles which make it the most compelling network to secure value. Its popularity, however, has often congested the network, led to prohibitively expensive transaction fees, and crowded out certain users and use cases. The activity that Ethereum settles will increasingly be executed on rollups - layer-2 environments tightly coupled to and secured by Ethereum.
+At its base layer, facing the blockchain trilemma, Ethereum has always been unwilling to sacrifice decentralization or security in favour of scalability - principles which make it the most compelling network to secure value. Its popularity, however, has often congested the network, led to expensive transaction fees, and crowded out certain users and use cases. To serve as the world's settlement layer for an internet of value, activity that Ethereum settles will increasingly be executed on rollups - layer-2 scaling environments tightly coupled to and secured by Ethereum.
 
 Rollups have shifted the tradeoff space: scaling to serve all users who seek to transact on Ethereum - and enabling lesser-value, non-financial applications - without subordinating the core principles which have led to Ethereum's strong claim of credible neutrality. There exists new tradeoff space, though, now among different rollup constructions, and there exists a hope to again move the solution curve, rather than move along it. Taiko attempts to do exactly that, by implementing a ZK-Rollup that stays as true to the EVM and Ethereum specification as possible, while mitigating drawbacks of non-ZK-optimized facets of the specification itself.
 
-Taiko aims for full Ethereum-equivalence, allowing our rollup to support all existing smart contracts and applications, developer tooling, and infrastructure. Complete compatibility benefits developers who can easily deploy their existing solidity contracts and continue using the tools they are familiar with. This convenience of compatibility extends to network participants and builders of Taiko's L2 blockchain as well, who can, for example, run Ethereum execution clients out-of-the-box as Taiko nodes. Finally, it extends to end-users, too, who can experience the same usage patterns and continue using their preferred Ethereum products. We have seen the strong demand for cheaper EVM environments empirically, with application developers and users often migrating to sidechains or alternative L1s which run the EVM, even if it meant much weaker security guarantees.
+Taiko aims for full Ethereum-equivalence, allowing our rollup to support all existing smart contracts and applications, developer tooling, and infrastructure. Complete compatibility benefits developers who can easily deploy their existing solidity contracts and continue using the tools they are familiar with. This convenience of compatibility extends to network participants and builders of Taiko's L2 blockchain as well, who can, for example, run Ethereum execution clients out-of-the-box as Taiko nodes. Finally, it extends to end-users, who can experience the same usage patterns and continue using their preferred Ethereum products. We have seen the strong demand for cheaper EVM environments empirically, with application developers and users often migrating to sidechains or alternative L1s which run the EVM, even if it meant much weaker security guarantees.
 
 To be Ethereum-equivalent means to emulate Ethereum along further dimensions, too. Prioritizing permissionlessness and decentralization within the layer-2 architecture ensures there is no dissonance between the environments, and the Ethereum community’s core principles are upheld. With calldata cost reductions in the past [Istanbul hardfork], and EIP4844 and others in the future, Ethereum's commitment to rollups is strong and credible; rollups' commitment to Ethereum ought to be the same.
 
@@ -101,13 +101,13 @@ To be Ethereum-equivalent means to emulate Ethereum along further dimensions, to
 \section{Previous Work}
 
 \color{black}
-The Ethereum ecosystem began looking above for its scalability needs, towards layer-2 solutions beginning in 2017 [Plasma; Poon, Buterin]. Layer-2s move computation off-chain, and keep data either on Ethereum, or also off-chain.
+The Ethereum ecosystem began looking above for its scalability needs, towards layer-2 solutions, beginning in 2017 with Plasma\cite{plasma}. Layer-2s move computation off-chain, and keep data either on Ethereum, or also off-chain.
 
-Rollups, which keep some data per transaction on Ethereum, emerged as the leading scalability path for Ethereum over the past four years or so, drawing more interest and excitement versus other layer-2 solutions (Plasma and State Channels) due primarily to the strong security guarantees they offer. Initially designed and proposed by Barry Whitehat and other Ethereum researchers in 2018, ZK-Rollups were implemented on Ethereum mainnet since 2019, beginning with Loopring. 
+Rollups, which keep some data per transaction on Ethereum, emerged as the leading scalability path for Ethereum over the past four years or so, drawing more interest and excitement versus other layer-2 solutions (Plasma and State Channels) due primarily to the strong security guarantees they offer, as well as the broader range of applications they can support. Initially designed and proposed by Vitalik Buterin\cite{vitalik-rollup} and Barry Whitehat\cite{barry-rollup} and other Ethereum researchers in 2018, ZK-Rollups were implemented on Ethereum mainnet since 2019, beginning with Loopring. 
 
-A drawback of ZK-Rollups back then was that due to constraints on ZKP capability, they were application-specific and not generalizable, thus precluding many Ethereum use cases and interoperability. The full power of the EVM could not be wielded within such an environment. An alternate form of rollup, Optimistic rollups, such as those implemented by Optimism and Arbitrum (beginning in 2021), were able to achieve EVM-compatibility, relying on crypto-economic games to validate state transitions with fraud proofs, as opposed to ZK validity proofs. Among the downsides of relying on fraud proofs instead of validity proofs is a relatively long time period necessary for the crypto-economic game to play out, which can inhibit withdrawing from the L2 without delay. 
+A drawback of ZK-Rollups back then was that due to constraints on ZKP capability, they were application-specific and not generalizable, thus precluding many Ethereum use cases and composability. The full power of the EVM could not be wielded within such an environment. A different form of rollup, Optimistic rollups, such as those implemented by Optimism and Arbitrum (beginning in 2021), were able to achieve EVM-compatibility, relying on crypto-economic games to validate state transitions with fraud proofs, as opposed to validity proofs. Among the downsides of relying on fraud proofs instead of validity proofs is a relatively lengthy time to finality, which can inhibit withdrawing from the L2 without delay. 
 
-The holy grail was widely recognized to be the best of both worlds: EVM rollups, with computation verified by ZK proofs. These ZK-EVMs have been in the works for a few years now, with projects such as zkSync, Starkware, and Scroll building implementations, and the Ethereum Foundation playing a critical role in the R\&D, with their Privacy and Scaling Explorations unit. Advancements by other foundations and researchers, such as the ZCash Foundation, have also greatly advanced the ZK proving systems required. The differences in these implementations mainly exist in how closely the rollups will support the EVM, versus make adjustments towards a ZK-favourable VM. The primary tradeoff today is thus between EVM-compatibility, and ZK-efficiency for proving. As mentioned, Taiko’s aim is to prioritize EVM and Ethereum-equivalence down to the opcode level, and mitigate any proving performance drawbacks via protocol design. 
+The holy grail was widely recognized to be the best of both worlds: EVM rollups, with computation verified by ZK proofs. These ZK-EVMs have been in the works for a few years now, with projects such as zkSync, Starkware, Polygon, and Scroll building implementations, and the Ethereum Foundation playing a critical role in the R\&D, with their Privacy and Scaling Explorations unit. Advancements by other foundations and researchers, such as ZCash and Aztec have also greatly advanced the ZK proving systems required. The differences in these implementations mainly exist in how closely the rollups will support the EVM, versus make adjustments towards a ZK-favourable VM. The primary tradeoff today is thus between EVM-compatibility, and ZK-efficiency for proving. As mentioned, Taiko’s aim is to prioritize EVM and Ethereum-equivalence down to the opcode level, and mitigate any proving performance drawbacks via protocol design, which we describe in the rest of this paper. 
 
 
 \color{black}
@@ -165,7 +165,7 @@ The Taiko ZK-Rollup protocol has two major smart contracts deployed on L1 and L2
 \end{enumerate}
 
 \subsection{Proposing Blocks}
-Any willing entity can propose new Taiko blocks using the {\underline{TaikoL1}} contract. Blocks are appended to a list in the order they come in (which is dictated by Ethereum). Once the block is in the list it is finalized and nodes can apply its state to the latest L2 state \ref{sec:properties}. Certain blocks however are deemed invalid by the protocol and these blocks will be ignored \ref{sec:proving-invalid}.
+Any willing entity can propose new Taiko blocks using the {\underline{TaikoL1}} contract. Blocks are appended to a list in the order they come in (which is dictated by Ethereum). Once the block in the list it is finalized and nodes can apply its state to the latest L2 state \ref{sec:properties}. Certain blocks however are deemed invalid by the protocol and these blocks will be ignored \ref{sec:proving-invalid}.
 
 \subsubsection{Proposed Block} A proposed block in Taiko is the collection of information (known as the block's \emph{Metadata}), $C$, and a list of transactions, $L$,  (known as the block \emph{txList}). Formally, we can refer to a proposed block as $\dot{B}$:
 
@@ -390,9 +390,9 @@ The ZK-EVM circuits is the core subsystem which allows Taiko to prove an Ethereu
 \subsection{Proof Generation} The proof computation function $\hat{C}$ for address $a$ is defined as:
 
 \begin{equation}
-    p^z(a) \equiv \hat{C}(a, H,\theta, L, \Delta(\theta::V^t(L)) )
+    p^z(a) \equiv \hat{C}(a, H,\theta, L, \Delta(\theta::V^t(L)),\kappa_z )
 \end{equation}
-Where $H$ is the block header, $\theta$ is the anchor transaction, $L$ is the block's RLP-encoded txList, and $\Delta$ is the EVM trace logs generated from running $\theta$ and all transactions in $L$ that the \textit{Contextual Validity} $V^t$ function returns \texttt{True}.
+Where $H$ is the block header, $\theta$ is the anchor transaction, $L$ is the block's RLP-encoded txList, $\Delta$ is the EVM trace logs generated from running $\theta$ and all transactions in $L$ that the \textit{Contextual Validity} $V^t$ function returns \texttt{True}, and $\kappa_z$ is  ZK-EVM's proving key.
 
 We assume:
 \begin{enumerate}
@@ -406,9 +406,9 @@ By making the prover address $a$ an input we can ensure a proof is directly link
 \subsection{Proof Verification} To verify a validity proof $p^z$ generated by address $a$ for the $i$-th block, we have the verification function defined as:
 
 \begin{equation}
-    \hat{V}(p^z, a, h[i], \texttt{KEC}(L), \kappa)
+    \hat{V}(p^z, a, h[i], \texttt{KEC}(L), \kappa_v)
 \end{equation}
-Where $h[i]$ is the block's block hash, $\kappa$ is  ZK-EVM's verification key.
+Where $h[i]$ is the block's block hash, $\kappa_v$ is  ZK-EVM's verification key.
 
 \section{Cross-Chain Communication}\label{sec:bridges}
 Taiko enables third parties to develop cross-chain bridges. To facilitate this, the protocol ensures that a subset of L1 block hashes are accessible from L2 smart contracts and a subset of  L2 block hashes are also accessible from the \underline{TaikoL1} smart contract. These block hashes can be used to verify the validity of cross-chain messages in standard smart contracts. Taiko does not have to provide any bridging solutions itself, as the supporting core functionality are ready for others to build upon. An exception to this is the Ether bridge which requires special handling, see \ref{eth-bridge}. 
@@ -486,6 +486,12 @@ Once withdrawing staked Ether is supported by Ethereum we will be able to use th
 \url{https://github.com/taikochain/taiko-mono/tree/main/packages/protocol}
 \bibitem{pse}
 \url{https://github.com/privacy-scaling-explorations}
+\bibitem{vitalik-rollup}
+Vitalik Buterin; \url{https://ethresear.ch/t/on-chain-scaling-to-potentially-500-tx-sec-through-mass-tx-validation/3477}
+\bibitem{barry-rollup}
+Barry Whitehat; \url{https://ethresear.ch/t/roll-up-roll-back-snark-side-chain-17000-tps/3675}
+\bibitem{plasma}
+J. Poon, V. Buterin; \url{https://plasma.io/plasma-deprecated.pdf}
 \end{thebibliography}
 
 \appendix
