@@ -60,14 +60,9 @@
 %\renewcommand{\itemhook}{\setlength{\topsep}{0pt}  \setlength{\itemsep}{0pt}\setlength{\leftmargin}{15pt}}
 
 \title[TAIKO: A Type-1 Ethereum ZK-Rollup\\ \smaller
-\textbf{{1.0.2}}]{TAIKO: A Type-1 Ethereum ZK-Rollup \\ \smaller \textbf{{1.0.2 (\thedate)}}}
+\textbf{{1.0.4}}]{TAIKO: A Type-1 Ethereum ZK-Rollup \\ \smaller \textbf{{1.0.4 (\thedate)}}}
 
-\author{
-  Daniel WANG \texttt{dan@taiko.xyz} \\
-  Brecht Devos \texttt{brecht@taiko.xyz}\\
-  Mevlana Gemici \texttt{mcg@taiko.xyz} \\
-  Matthew Finestone \texttt{matthew@taiko.xyz}
-}
+\author{Taiko Labs (info@taiko.xyz)}
 
 \begin{document}
 
@@ -83,7 +78,6 @@ An Ethereum-equivalent ZK-Rollup allows for scaling Ethereum without sacrificing
 \setlength{\columnsep}{20pt}
 \begin{multicols}{2}
 
-
 \section{Introduction}
 Ethereum is well on its way into executing its rollup-centric roadmap to achieve scalability\cite{rollup-centric}. This progress has been shared by the independent rollup projects, as well as Ethereum itself which has coordinated to accommodate rollup-friendly upgrades. 
 
@@ -94,7 +88,6 @@ Rollups have shifted the tradeoff space: scaling to serve all users who seek to 
 Taiko aims for full Ethereum-equivalence, allowing our rollup to support all existing Ethereum smart contracts and dapps, developer tooling, and infrastructure. Complete compatibility benefits developers who can deploy their existing solidity contracts as is, and continue using the tools they are familiar with. This compatibility also extends to network participants and builders of Taiko's L2 blockchain, who can, for example, run Taiko nodes which are minimally modified Ethereum execution clients like Geth, and reuse other battle-hardened infrastructure. Finally, it extends to end-users, who can experience the same usage patterns and continue using their preferred Ethereum products. We have seen the strong demand for cheaper EVM environments empirically, with dapp and protocol developers as well as users often migrating to sidechains or alternative L1s which run the EVM, even if it meant much weaker security guarantees.
 
 To be Ethereum-equivalent means to emulate Ethereum along further dimensions, too. Prioritizing permissionlessness and decentralization within the layer-2 architecture ensures there is no dissonance between the environments, and that the Ethereum community’s core principles are upheld. With calldata cost reductions in the past\cite{eip2028}, and EIP-4844\cite{eip4844} and other mechanisms in the future, Ethereum's commitment to rollups is strong and credible; rollups' commitment to Ethereum ought to be the same.
-
 
 \section{Previous Work}
 
